@@ -12,6 +12,7 @@ session_status() !== 2 ? session_start(): null;
     <title>Document</title>
 </head>
 <body>
+    <button><a href="form.php">Adicionar Cliente</a></button>
     <?php require_once("list.php");?>
 </body>
 </html>

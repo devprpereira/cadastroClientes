@@ -35,7 +35,7 @@ foreach ($data as $dados) {
     echo '<th>' . $dados['endereco'] . '</th>';
     echo '<th>' . $dados['numero'] . '</th>';
     echo '<th>' . $dados['complemento'] . '</th>';
-    echo '<th> <a href="client.php?edit=' . $dados['id'] . '">Editar</a> </th>';
+    echo '<th> <a href="form.php?edit=' . $dados['id'] . '">Editar</a> </th>';
     echo '<th> <a href="client.php?remove=' . $dados['id'] . '">Remover</a> </th>';
     echo '</tr>';
 
