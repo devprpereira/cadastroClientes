@@ -1,6 +1,29 @@
 <!DOCTYPE html>
-<?php 
+<?php
+session_status() !== 2 ? session_start() : null;
 
+// Se tiver mensagem de erro, mostra ao abrir e limpa a sessão
+if (isset($_SESSION['status']) && !empty($_SESSION['status']) && $_SESSION['status'] == "FALHA") {
+    echo '<div class="sessaoErro">';
+    if (count($_SESSION['mensagem']) > 1){
+        echo '<h3> Foram encontradas ' . count($_SESSION['mensagem']) . ' inconsistências no formulário!</h3><br/>';    
+    } else {
+        echo '<h3> Foi encontrada 1 inconsistência no formulário!</h3><br/>';
+    }
+    foreach ((array) $_SESSION['mensagem'] as $chave => $valor) {
+        echo "<div> Campo <span class='erro'>" . $valor . "</span> deve ser preenchido com dados válidos! </div>";
+    }
+    echo '</div>';
+    echo '</br>';
+    //Limpa os dados de sessão depois de mostrar pra deixar essa área limpa
+    unset($_SESSION['status']);
+    unset($_SESSION['area']);
+    unset($_SESSION['mensagem']);
+}
+$edit = false;
+if (isset($_GET['edit']) && !empty($_GET['edit'])){
+    $edit = true;
+}
 
 ?>
 <html>
@@ -15,48 +38,69 @@
 
     <!-- Adicionando JQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    
+
     <!-- Adicionando plugin para mascarar os inputs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+    <style>
+        * {
+            margin: 0 auto;
+            padding: 0;
+        }
+        .sessaoErro {
+            background-color: red;
+            color: white;
+            border: 1.5px solid black;
+            border-radius: 5px;
+            padding: 2.5px;
+        }
+
+        .erro {
+            text-transform: uppercase;
+        }
+    </style>
 </head>
 
 <body>
 
     <form action="client.php" method="POST">
+        <!-- Se tiver edit é porque está editando, então adiciona esse parâmetro -->
+        <?php if ($edit) {echo '<input type="hidden" value="'. intval($_GET['edit']) . '" name="edit">';} ?>
+        
         <label for="name"> Nome:
             <input name="name" type="text" id="name" value="" size="30" maxlength="30" required />
         </label><br />
         <label for="dtNascimento"> Data Nascimento:
-            <input name="dtNascimento" type="text" id="dtNascimento" placeholder="99/99/9999" size="10" maxlength="10" required />
+            <input name="dtNascimento" type="date" id="dtNascimento" placeholder="99/99/9999" max="8" required />
         </label><br />
 
         <span>Sexo:</span>
-        <input name="sexo" type="radio" id="sexo" value="M" size="1" required checked/><label for="sexo" checked>Masculino</label>
+        <input name="sexo" type="radio" id="sexo" value="M" size="1" required checked /><label for="sexo" checked>Masculino</label>
         <input name="sexo" type="radio" id="sexo" value="F" size="1" required /><label for="sexo">Feminino</label>
         </label><br />
         <label>Cep:
-            <input name="cep" type="text" id="cep" size="10" maxlength="9" placeholder="99.999-999" value=""/>
-        <label>Cidade:
-            <input name="cidade" type="text" id="cidade" size="40" readonly disabled /></label><br />
-        <label>Estado:
-            <input name="uf" type="text" id="uf" size="2" readonly disabled/></label><br />
-        <label>Bairro:
-            <input name="bairro" type="text" id="bairro" size="40" /></label><br />
+            <input name="cep" type="text" id="cep" size="10" maxlength="9" placeholder="99.999-999" value="" />
+            <label>Cidade:
+                <input name="cidade" type="text" id="cidade" size="40" readonly required /></label><br />
+            <label>Estado:
+                <input name="uf" type="text" id="uf" size="2" readonly required /></label><br />
+            <label>Bairro:
+                <input name="bairro" type="text" id="bairro" size="40" required /></label><br />
         </label><br />
         <label>Endereço:
-            <input name="endereco" type="text" id="endereco" size="60" /></label><br />
+            <input name="endereco" type="text" id="endereco" size="60" required /></label><br />
         <label>Número:
-            <input name="numero" type="text" id="numero" size="10" /></label><br />
+            <input name="numero" type="text" id="numero" size="10" required /></label><br />
         <label>Complemento:
-            <input name="complemento" type="text" id="complemento" size="20" /></label><br />
-            <?php ?>
+            <input name="complemento" type="text" id="complemento" size="20" required /></label><br />
+        <?php ?>
         <input type="submit" value="Salvar">
     </form>
 </body>
 
 <script>
     $(document).ready(function() {
-        $("#dtNascimento").mask("99/99/9999");
+
         $("#cep").mask("99.999-999");
 
 
